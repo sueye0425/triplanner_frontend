@@ -63,25 +63,25 @@ export function CompletedItinerary({ tripPlan, completedItinerary, onBack }: Com
               </div>
               <div className="p-8 space-y-8">
                 {items.map((item, index) => {
-                  const isLandmark = item.type === 'landmark';
+                  const isMeal = item.mealtime?.toLowerCase() === 'lunch' || item.mealtime?.toLowerCase() === 'dinner';
 
                   return (
                     <div 
-                      key={`${item.type}-${item.name}-${index}`}
+                      key={`${item.name}-${index}`}
                       className={`flex gap-4 p-6 rounded-xl ${
-                        isLandmark 
-                          ? 'bg-primary-50 border border-primary-100' 
-                          : 'bg-amber-50 border border-amber-100'
+                        isMeal 
+                          ? 'bg-amber-50 border border-amber-100' 
+                          : 'bg-primary-50 border border-primary-100'
                       }`}
                     >
                       <div className="flex-none">
-                        {isLandmark ? (
-                          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-100">
-                            <MapPinned className="w-5 h-5 text-primary-600" />
-                          </div>
-                        ) : (
+                        {isMeal ? (
                           <div className="w-10 h-10 flex items-center justify-center rounded-full bg-amber-100">
                             <Utensils className="w-5 h-5 text-amber-600" />
+                          </div>
+                        ) : (
+                          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-100">
+                            <MapPinned className="w-5 h-5 text-primary-600" />
                           </div>
                         )}
                       </div>
@@ -97,7 +97,7 @@ export function CompletedItinerary({ tripPlan, completedItinerary, onBack }: Com
                           )}
                         </div>
                         <p className={`text-sm ${
-                          isLandmark ? 'text-primary-700' : 'text-amber-700'
+                          isMeal ? 'text-amber-700' : 'text-primary-700'
                         }`}>
                           {item.description}
                         </p>
