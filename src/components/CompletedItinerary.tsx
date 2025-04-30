@@ -17,7 +17,7 @@ export function CompletedItinerary({ tripPlan, completedItinerary, onBack }: Com
           backgroundImage: 'url("https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80")',
         }}></div>
         <div className="absolute inset-0 h-[400px] bg-gradient-to-b from-black/60 to-black/20"></div>
-        
+
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
           <div className="mb-8">
             <BackButton 
@@ -62,45 +62,49 @@ export function CompletedItinerary({ tripPlan, completedItinerary, onBack }: Com
                 </h2>
               </div>
               <div className="p-8 space-y-8">
-                {items.map((item, index) => (
-                  <div 
-                    key={`${item.type}-${item.name}-${index}`}
-                    className={`flex gap-4 p-6 rounded-xl ${
-                      item.type === 'landmark' 
-                        ? 'bg-primary-50 border border-primary-100' 
-                        : 'bg-amber-50 border border-amber-100'
-                    }`}
-                  >
-                    <div className="flex-none">
-                      {item.type === 'landmark' ? (
-                        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-100">
-                          <MapPinned className="w-5 h-5 text-primary-600" />
-                        </div>
-                      ) : (
-                        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-amber-100">
-                          <Utensils className="w-5 h-5 text-amber-600" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold">
-                          {item.name}
-                        </h3>
-                        {item.mealtime && (
-                          <span className="px-3 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700 capitalize">
-                            {item.mealtime}
-                          </span>
+                {items.map((item, index) => {
+                  const isMeal = item.mealtime?.toLowerCase() === 'lunch' || item.mealtime?.toLowerCase() === 'dinner';
+
+                  return (
+                    <div 
+                      key={`${item.name}-${index}`}
+                      className={`flex gap-4 p-6 rounded-xl ${
+                        isMeal 
+                          ? 'bg-amber-50 border border-amber-100' 
+                          : 'bg-primary-50 border border-primary-100'
+                      }`}
+                    >
+                      <div className="flex-none">
+                        {isMeal ? (
+                          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-amber-100">
+                            <Utensils className="w-5 h-5 text-amber-600" />
+                          </div>
+                        ) : (
+                          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-100">
+                            <MapPinned className="w-5 h-5 text-primary-600" />
+                          </div>
                         )}
                       </div>
-                      <p className={`text-sm ${
-                        item.type === 'landmark' ? 'text-primary-700' : 'text-amber-700'
-                      }`}>
-                        {item.description}
-                      </p>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-lg font-semibold">
+                            {item.name}
+                          </h3>
+                          {item.mealtime && (
+                            <span className="px-3 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700 capitalize">
+                              {item.mealtime}
+                            </span>
+                          )}
+                        </div>
+                        <p className={`text-sm ${
+                          isMeal ? 'text-amber-700' : 'text-primary-700'
+                        }`}>
+                          {item.description}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}
