@@ -8,6 +8,8 @@ import {
   Download,
   Loader2,
   AlertCircle,
+  ArrowRight,
+  Star,
 } from 'lucide-react';
 import { TripPlan } from '../types';
 import { BackButton } from './BackButton';
@@ -66,51 +68,54 @@ export function FinalItinerary({
     URL.revokeObjectURL(url);
   };
 
-  if (prefetchStatus === 'fetching') {
+  const isFetching = prefetchStatus === 'fetching';
+  const isError = prefetchStatus === 'error';
+
+  if (isFetching) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 flex items-center justify-center">
         <LoadingState variant="finalize" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50">
       <div className="relative">
         <div
-          className="absolute inset-0 h-[400px] bg-cover bg-center"
+          className="absolute inset-0 h-[400px] bg-cover bg-center opacity-30"
           style={{
             backgroundImage:
-              'url("https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2946&q=80")',
+              'url("https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80")',
           }}
         ></div>
-        <div className="absolute inset-0 h-[400px] bg-gradient-to-b from-black/60 to-black/20"></div>
+        <div className="absolute inset-0 h-[400px] bg-gradient-to-b from-amber-900/30 to-transparent"></div>
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <BackButton
               onClick={onBack}
               label="Back to Planning"
               variant="light"
             />
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleShare}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors backdrop-blur-sm"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white/80 rounded-full hover:bg-white transition-colors backdrop-blur-sm shadow-sm"
               >
                 <Share2 size={16} />
                 Share
               </button>
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors backdrop-blur-sm"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white/80 rounded-full hover:bg-white transition-colors backdrop-blur-sm shadow-sm"
               >
                 <Printer size={16} />
                 Print
               </button>
               <button
                 onClick={handleDownload}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-600 to-amber-600 rounded-full hover:from-orange-700 hover:to-amber-700 transition-all shadow-sm"
               >
                 <Download size={16} />
                 Download
@@ -118,26 +123,27 @@ export function FinalItinerary({
             </div>
           </div>
 
-          <div className="text-center text-white">
-            <h1 className="font-display text-5xl font-bold mb-6">
-              Your Trip to {tripPlan.details.destination}
+          <div className="text-center">
+            <h1 className="font-display text-5xl font-bold mb-6 text-gray-900">
+              Your Trip to{' '}
+              <span className="text-orange-600">{tripPlan.details.destination}</span>
             </h1>
-            <div className="flex justify-center gap-8">
-              <div className="flex items-center gap-2">
-                <MapPin className="text-primary-300" size={20} />
-                <span>{tripPlan.details.destination}</span>
+            <div className="flex flex-wrap justify-center gap-6">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm">
+                <MapPin className="text-orange-600" size={20} />
+                <span className="text-gray-700">{tripPlan.details.destination}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="text-primary-300" size={20} />
-                <span>{tripPlan.details.travelDays} days</span>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm">
+                <Calendar className="text-orange-600" size={20} />
+                <span className="text-gray-700">{tripPlan.details.travelDays} days</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Users className="text-primary-300" size={20} />
-                <span>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm">
+                <Users className="text-orange-600" size={20} />
+                <span className="text-gray-700">
                   {tripPlan.details.withKids &&
                     `With kids${
-                      tripPlan.details.kidsAge
-                        ? ` (${tripPlan.details.kidsAge} years)`
+                      tripPlan.details.kidsAge && tripPlan.details.kidsAge.length > 0
+                        ? ` (ages: ${tripPlan.details.kidsAge.join(', ')})`
                         : ''
                     }`}
                   {tripPlan.details.withElders && ' • With elderly'}
@@ -156,48 +162,62 @@ export function FinalItinerary({
           </div>
         )}
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="space-y-8">
+        <div className="bg-white rounded-3xl shadow-xl p-8">
+          <div className="space-y-12">
             {tripPlan.itinerary.map((day) => (
               <div
                 key={day.day}
-                className="border-b border-gray-200 pb-8 last:border-0 last:pb-0"
+                className="border-b border-orange-100 pb-12 last:border-0 last:pb-0"
               >
-                <h2 className="text-2xl font-display font-bold text-gray-900 mb-6">
-                  Day {day.day}
-                </h2>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
+                    <span className="text-2xl font-semibold text-orange-600">
+                      {day.day}
+                    </span>
+                  </div>
+                  <h2 className="text-2xl font-display font-bold text-gray-900">
+                    Day {day.day}
+                  </h2>
+                </div>
                 {day.attractions.length > 0 ? (
                   <ul className="space-y-4">
                     {day.attractions.map((attraction, index) => (
                       <li key={attraction.name}>
-                        {attraction.type === 'restaurant' ? (
-                          <RestaurantCard
-                            name={attraction.name}
-                            description={attraction.description}
-                            mealType={attraction.mealType}
-                          />
-                        ) : (
-                          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg shadow-sm">
-                            <span className="flex-none w-8 h-8 flex items-center justify-center bg-primary-100 text-primary-600 rounded-full font-medium">
-                              {index + 1}
-                            </span>
-                            <div>
-                              <div className="font-semibold text-gray-800">
-                                {attraction.name}
-                              </div>
-                              {attraction.description && (
-                                <p className="text-sm text-gray-600">
-                                  {attraction.description}
-                                </p>
+                        <div className="flex items-start gap-4 p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl">
+                          <div className="flex-none w-8 h-8 flex items-center justify-center bg-orange-100 text-orange-600 rounded-full font-medium">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900 flex items-center gap-2">
+                              {attraction.name}
+                              {attraction.badge && (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                  {attraction.badge === 'new' ? (
+                                    'New'
+                                  ) : (
+                                    <span className="flex items-center gap-1">
+                                      <Star
+                                        size={12}
+                                        className="fill-orange-500 text-orange-500"
+                                      />
+                                      Trending
+                                    </span>
+                                  )}
+                                </span>
                               )}
                             </div>
+                            {attraction.description && (
+                              <p className="mt-1 text-gray-600">
+                                {attraction.description}
+                              </p>
+                            )}
                           </div>
-                        )}
+                        </div>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-gray-500 italic">
+                  <p className="text-gray-500 italic text-center py-8">
                     No attractions planned for this day
                   </p>
                 )}
@@ -206,44 +226,48 @@ export function FinalItinerary({
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-center gap-4">
+        <div className="mt-12 flex flex-col items-center gap-4">
           <button
             onClick={onComplete}
-            disabled={prefetchStatus === 'error'}
+            disabled={isError}
             className={`
-              w-full max-w-md px-8 py-4 text-lg font-semibold rounded-xl shadow-lg
-              transition-all duration-200
+              w-full max-w-md px-8 py-4 text-lg font-semibold rounded-2xl
+              transition-all duration-200 flex items-center justify-center gap-3
               ${
-                prefetchStatus === 'error'
+                isError
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-primary-600 text-white hover:bg-primary-700'
+                  : 'bg-gradient-to-r from-orange-600 to-amber-600 text-white hover:from-orange-700 hover:to-amber-700 shadow-lg hover:shadow-xl'
               }
             `}
           >
-            <span className="flex items-center justify-center gap-3">
-              {prefetchStatus === 'fetching' ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Enhancing your itinerary...</span>
-                </>
-              ) : prefetchStatus === 'error' ? (
-                'Try Again'
-              ) : (
-                'Complete with Details'
-              )}
-            </span>
+            {isFetching ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Enhancing your itinerary...</span>
+              </>
+            ) : isError ? (
+              'Try Again'
+            ) : (
+              <>
+                <span>Complete with Details</span>
+                <ArrowRight className="w-5 h-5" />
+              </>
+            )}
           </button>
 
-          {prefetchStatus === 'fetching' && (
-            <p className="text-sm text-gray-600">
-              We're adding restaurant recommendations and optimizing your
-              schedule...
+          {isFetching && (
+            <p className="text-sm text-gray-600 text-center max-w-md">
+              We're adding restaurant recommendations and optimizing your schedule
+              to make your trip even more enjoyable...
             </p>
           )}
         </div>
 
-        <div className="mt-8 text-center text-gray-500 text-sm">
-          Generated with AI-Powered Trip Planner
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 text-orange-700">
+            <Star size={16} className="fill-orange-500 text-orange-500" />
+            <span className="font-medium">Generated with AI-Powered Trip Planner</span>
+          </div>
         </div>
       </div>
     </div>

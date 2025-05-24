@@ -43,7 +43,7 @@ export function CompletedItinerary({ tripPlan, completedItinerary, onBack }: Com
               <div className="flex items-center gap-2">
                 <Users className="text-primary-300" size={20} />
                 <span>
-                  {tripPlan.details.withKids && `With kids${tripPlan.details.kidsAge ? ` (${tripPlan.details.kidsAge} years)` : ''}`}
+                  {tripPlan.details.withKids && `With kids${tripPlan.details.kidsAge && tripPlan.details.kidsAge.length > 0 ? ` (ages: ${tripPlan.details.kidsAge.join(', ')})` : ''}`}
                   {tripPlan.details.withElders && ' • With elderly'}
                 </span>
               </div>

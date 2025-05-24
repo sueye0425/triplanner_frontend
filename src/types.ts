@@ -2,7 +2,7 @@ export interface TripDetails {
   destination: string;
   travelDays: number;
   withKids: boolean;
-  kidsAge?: number;
+  kidsAge?: number[];
   withElders: boolean;
 }
 
