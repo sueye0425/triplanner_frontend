@@ -9,7 +9,7 @@ const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const cache = new Map<string, CacheEntry>();
 
 export function getCacheKey(details: TripDetails): string {
-  return `${details.destination}-${details.travelDays}-${details.withKids}-${details.kidsAge}-${details.withElders}`;
+  return `${details.destination}-${details.travelDays}-${details.withKids}-${details.kidsAge?.join(',') || 'none'}-${details.withElders}`;
 }
 
 export function getFromCache(key: string): any | null {

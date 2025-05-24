@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TripDetails } from '../types';
-import { MapPin, Calendar, Users, Baby, Minus, Plus } from 'lucide-react';
+import { MapPin, Calendar, Users, Baby, Minus, Plus, X } from 'lucide-react';
 
 interface NewTripFormProps {
   onSubmit: (details: TripDetails) => void;
@@ -13,7 +13,7 @@ export function NewTripForm({ onSubmit, disabled }: NewTripFormProps) {
     travelDays: 3,
     withKids: false,
     withElders: false,
-    kidsAge: null,
+    kidsAge: [],
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -46,32 +46,51 @@ export function NewTripForm({ onSubmit, disabled }: NewTripFormProps) {
     }));
   };
 
-  const incrementKidsAge = () => {
+  const addKid = () => {
     setDetails((prev) => ({
       ...prev,
-      kidsAge: Math.min((prev.kidsAge ?? 0) + 1, 17),
+      kidsAge: [...(prev.kidsAge || []), 5], // Default age of 5
     }));
   };
 
-  const decrementKidsAge = () => {
+  const removeKid = (index: number) => {
     setDetails((prev) => ({
       ...prev,
-      kidsAge: Math.max((prev.kidsAge ?? 1) - 1, 0),
+      kidsAge: (prev.kidsAge || []).filter((_, i) => i !== index),
     }));
+  };
+
+  const updateKidAge = (index: number, age: number) => {
+    setDetails((prev) => ({
+      ...prev,
+      kidsAge: (prev.kidsAge || []).map((kidAge, i) => 
+        i === index ? Math.min(Math.max(Math.floor(age), 0), 17) : kidAge
+      ),
+    }));
+  };
+
+  const incrementKidAge = (index: number) => {
+    const currentAge = details.kidsAge?.[index] || 0;
+    updateKidAge(index, currentAge + 1);
+  };
+
+  const decrementKidAge = (index: number) => {
+    const currentAge = details.kidsAge?.[index] || 0;
+    updateKidAge(index, currentAge - 1);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-8 p-8 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20">
       <div>
         <label
           htmlFor="destination"
-          className="block text-xl font-display font-semibold text-gray-900 mb-3"
+          className="block text-2xl font-display font-semibold text-gray-900 mb-3 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent"
         >
           Where would you like to go?
         </label>
-        <div className="relative">
+        <div className="relative group">
           <MapPin
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 transition-colors group-hover:text-orange-600"
             size={20}
           />
           <input
@@ -82,7 +101,10 @@ export function NewTripForm({ onSubmit, disabled }: NewTripFormProps) {
             onChange={(e) =>
               setDetails({ ...details, destination: e.target.value })
             }
-            className="pl-12 w-full h-14 rounded-xl border-gray-200 bg-white text-lg text-gray-900 placeholder-gray-400 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+            className="pl-12 w-full h-14 rounded-2xl border-0 bg-orange-50/50 text-lg text-gray-900 placeholder-gray-400 
+              shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] backdrop-blur-sm
+              focus:bg-orange-50/80 focus:ring-2 focus:ring-orange-500/50 focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]
+              transition-all duration-200"
             required
             disabled={disabled}
           />
@@ -90,7 +112,7 @@ export function NewTripForm({ onSubmit, disabled }: NewTripFormProps) {
       </div>
 
       <div>
-        <label className="block text-xl font-display font-semibold text-gray-900 mb-3">
+        <label className="block text-2xl font-display font-semibold mb-3 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
           How many days?
         </label>
         <div className="flex items-center gap-4">
@@ -98,13 +120,15 @@ export function NewTripForm({ onSubmit, disabled }: NewTripFormProps) {
             type="button"
             onClick={decrementDays}
             disabled={details.travelDays <= 1 || disabled}
-            className="w-12 h-12 flex items-center justify-center rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-orange-50/50 text-orange-600 
+              hover:bg-orange-100/80 disabled:opacity-50 disabled:cursor-not-allowed
+              transition-all duration-200 backdrop-blur-sm shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)]"
           >
             <Minus size={20} />
           </button>
-          <div className="relative flex-1">
+          <div className="relative flex-1 group">
             <Calendar
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 transition-colors group-hover:text-orange-600"
               size={20}
             />
             <input
@@ -119,7 +143,10 @@ export function NewTripForm({ onSubmit, disabled }: NewTripFormProps) {
                   ),
                 })
               }
-              className="pl-12 w-full h-14 rounded-xl border-gray-200 bg-white text-lg text-gray-900 text-center shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              className="pl-12 w-full h-14 rounded-2xl border-0 bg-orange-50/50 text-lg text-gray-900 text-center 
+                shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] backdrop-blur-sm
+                focus:bg-orange-50/80 focus:ring-2 focus:ring-orange-500/50 focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]
+                transition-all duration-200"
               disabled={disabled}
             />
           </div>
@@ -127,7 +154,9 @@ export function NewTripForm({ onSubmit, disabled }: NewTripFormProps) {
             type="button"
             onClick={incrementDays}
             disabled={details.travelDays >= 14 || disabled}
-            className="w-12 h-12 flex items-center justify-center rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-orange-50/50 text-orange-600 
+              hover:bg-orange-100/80 disabled:opacity-50 disabled:cursor-not-allowed
+              transition-all duration-200 backdrop-blur-sm shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)]"
           >
             <Plus size={20} />
           </button>
@@ -136,37 +165,46 @@ export function NewTripForm({ onSubmit, disabled }: NewTripFormProps) {
 
       <div className="space-y-4">
         <div className="flex items-center gap-6">
-          <label className="flex items-center gap-3 cursor-pointer group">
+          <label className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl hover:bg-orange-50/50 transition-colors">
             <input
               type="checkbox"
               checked={details.withKids}
-              onChange={(e) =>
-                setDetails({ ...details, withKids: e.target.checked })
-              }
-              className="w-5 h-5 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              onChange={(e) => {
+                const isChecked = e.target.checked;
+                setDetails({
+                  ...details,
+                  withKids: isChecked,
+                  kidsAge: isChecked && (!details.kidsAge || details.kidsAge.length === 0) 
+                    ? [5]
+                    : isChecked 
+                    ? details.kidsAge 
+                    : []
+                });
+              }}
+              className="w-5 h-5 text-orange-600 rounded-lg border-orange-200 focus:ring-orange-500/50"
               disabled={disabled}
             />
             <Baby
               size={20}
-              className="text-gray-400 group-hover:text-gray-600"
+              className="text-orange-500 group-hover:text-orange-600 transition-colors"
             />
             <span className="text-lg font-medium text-gray-900 group-hover:text-gray-700">
               With Kids
             </span>
           </label>
-          <label className="flex items-center gap-3 cursor-pointer group">
+          <label className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl hover:bg-orange-50/50 transition-colors">
             <input
               type="checkbox"
               checked={details.withElders}
               onChange={(e) =>
                 setDetails({ ...details, withElders: e.target.checked })
               }
-              className="w-5 h-5 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+              className="w-5 h-5 text-orange-600 rounded-lg border-orange-200 focus:ring-orange-500/50"
               disabled={disabled}
             />
             <Users
               size={20}
-              className="text-gray-400 group-hover:text-gray-600"
+              className="text-orange-500 group-hover:text-orange-600 transition-colors"
             />
             <span className="text-lg font-medium text-gray-900 group-hover:text-gray-700">
               With Elderly
@@ -175,68 +213,103 @@ export function NewTripForm({ onSubmit, disabled }: NewTripFormProps) {
         </div>
 
         {details.withKids && (
-          <div className="pl-8 pt-2">
-            <label
-              htmlFor="kidsAge"
-              className="block text-base font-medium text-gray-700 mb-2"
-            >
-              Kids Age
-            </label>
-            <div className="flex items-center gap-4">
+          <div className="pl-8 pt-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="block text-lg font-medium text-gray-700">
+                Kids Ages
+              </label>
               <button
                 type="button"
-                onClick={decrementKidsAge}
-                disabled={!details.kidsAge || details.kidsAge <= 0 || disabled}
-                className="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Minus size={16} />
-              </button>
-              <div className="relative flex-1">
-                <Baby
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={18}
-                />
-                <input
-                  type="number"
-                  id="kidsAge"
-                  min="0"
-                  max="17"
-                  value={details.kidsAge ?? ''}
-                  onChange={(e) =>
-                    setDetails({
-                      ...details,
-                      kidsAge: parseInt(e.target.value),
-                    })
-                  }
-                  className="pl-12 w-full h-12 rounded-xl border-gray-200 bg-white text-gray-900 text-center shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                  placeholder="Age"
-                  required
-                  disabled={disabled}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={incrementKidsAge}
-                disabled={
-                  (details.kidsAge !== null && details.kidsAge >= 17) ||
-                  disabled
-                }
-                className="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={addKid}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-orange-600 bg-orange-50/80 
+                  rounded-xl hover:bg-orange-100/80 transition-all duration-200 shadow-sm hover:shadow"
               >
                 <Plus size={16} />
+                Add Kid
               </button>
+            </div>
+            
+            <div className="space-y-3">
+              {details.kidsAge?.map((age, index) => (
+                <div key={index} className="flex items-center gap-4 p-4 rounded-2xl bg-orange-50/30 backdrop-blur-sm">
+                  <span className="text-sm font-medium text-orange-600 min-w-[60px]">
+                    Kid {index + 1}
+                  </span>
+                  <div className="flex items-center gap-2 flex-1">
+                    <button
+                      type="button"
+                      onClick={() => decrementKidAge(index)}
+                      disabled={age <= 0 || disabled}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/80 text-orange-600 
+                        hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <div className="relative flex-1 max-w-[120px] group">
+                      <Baby
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 transition-colors group-hover:text-orange-600"
+                        size={16}
+                      />
+                      <input
+                        type="number"
+                        min="0"
+                        max="17"
+                        value={age}
+                        onChange={(e) =>
+                          updateKidAge(index, parseInt(e.target.value) || 0)
+                        }
+                        className="pl-10 w-full h-10 rounded-lg border-0 bg-white/80 text-gray-900 text-center text-sm 
+                          shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] focus:ring-2 focus:ring-orange-500/50
+                          transition-all duration-200"
+                        placeholder="Age"
+                        required
+                        disabled={disabled}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => incrementKidAge(index)}
+                      disabled={age >= 17 || disabled}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/80 text-orange-600 
+                        hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <Plus size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeKid(index)}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                      disabled={details.kidsAge && details.kidsAge.length === 1}
+                      title={details.kidsAge && details.kidsAge.length === 1 ? "At least one kid is required when 'With Kids' is selected" : "Remove this kid"}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
       </div>
 
-      <div className="pt-4">
+      <div className="pt-6">
         <button
           type="submit"
-          className="w-full flex justify-center py-4 px-6 text-xl font-bold text-gray-900 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors shadow-lg"
+          className="w-full flex justify-center py-4 px-6 text-xl font-bold text-white 
+            bg-gradient-to-r from-orange-600 to-amber-600 rounded-2xl
+            hover:from-orange-700 hover:to-amber-700 
+            shadow-lg hover:shadow-xl shadow-orange-600/10 hover:shadow-orange-600/20
+            transform hover:-translate-y-0.5 transition-all duration-200"
           disabled={disabled}
         >
-          {disabled ? 'Creating Your Plan...' : 'Plan My Trip'}
+          {disabled ? (
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Creating Your Plan...</span>
+            </div>
+          ) : (
+            'Plan My Trip'
+          )}
         </button>
       </div>
     </form>

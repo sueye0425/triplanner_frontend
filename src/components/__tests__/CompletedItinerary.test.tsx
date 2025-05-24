@@ -2,60 +2,61 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CompletedItinerary } from '../CompletedItinerary';
 import '@testing-library/jest-dom';
+import type { CompletedItinerary as CompletedItineraryData } from '../../types';
 
 const mockTripPlan = {
   details: {
-    destination: 'San Francisco',
+    destination: 'Paris',
     travelDays: 3,
     withKids: true,
-    kidsAge: 10,
+    kidsAge: [10],
     withElders: false
   },
   wishlist: [],
   itinerary: []
 };
 
-const mockCompletedItinerary = {
+const mockCompletedItinerary: CompletedItineraryData = {
   'Day 1': [
     {
-      type: 'landmark',
+      type: 'landmark' as const,
       name: 'Golden Gate Bridge',
       description: 'Iconic suspension bridge spanning the Golden Gate strait',
       mealtime: null
     },
     {
-      type: 'restaurant',
+      type: 'restaurant' as const,
       name: 'House of Prime Rib',
       description: 'Classic San Francisco institution serving prime rib',
-      mealtime: 'dinner'
+      mealtime: 'dinner' as const
     }
   ],
   'Day 2': [
     {
-      type: 'landmark',
+      type: 'landmark' as const,
       name: 'Alcatraz Island',
       description: 'Historic former prison on an island in San Francisco Bay',
       mealtime: null
     },
     {
-      type: 'restaurant',
+      type: 'restaurant' as const,
       name: 'Tartine Bakery',
       description: 'Famous bakery known for sourdough bread',
-      mealtime: 'breakfast'
+      mealtime: 'breakfast' as const
     }
   ],
   'Day 3': [
     {
-      type: 'landmark',
+      type: 'landmark' as const,
       name: 'Fisherman\'s Wharf',
       description: 'Waterfront community with seafood restaurants and shops',
       mealtime: null
     },
     {
-      type: 'restaurant',
+      type: 'restaurant' as const,
       name: 'State Bird Provisions',
       description: 'Modern American restaurant with dim sum-style service',
-      mealtime: 'dinner'
+      mealtime: 'dinner' as const
     }
   ]
 };
