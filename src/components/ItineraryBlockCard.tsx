@@ -23,7 +23,11 @@ export function SkeletonItineraryCard({ isRestaurant = false }: { isRestaurant?:
           <div className="mb-3">
             <div className="flex items-center justify-between mb-2">
               <div className="h-6 bg-gray-300/50 rounded w-48"></div>
-              <div className="h-6 bg-gray-300/50 rounded w-16"></div>
+              <div className="flex items-center gap-2">
+                {/* Duration skeleton */}
+                <div className="h-5 bg-gray-300/50 rounded-full w-16"></div>
+                <div className="h-6 bg-gray-300/50 rounded w-16"></div>
+              </div>
             </div>
             <div className="h-4 bg-gray-300/50 rounded w-20 mb-3"></div>
           </div>
@@ -111,6 +115,11 @@ export function ItineraryBlockCard({ block }: ItineraryBlockCardProps) {
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xl font-bold text-gray-900">{block.name}</h3>
               <div className="flex items-center gap-2">
+                {/* Duration Badge */}
+                <div className="flex items-center gap-1 px-2.5 py-1 bg-gray-100/80 rounded-full border border-gray-200/50">
+                  <Clock size={12} className="text-gray-600" />
+                  <span className="text-xs font-medium text-gray-700">{block.duration}</span>
+                </div>
                 {block.mealtime && getMealtimeDisplay(block.mealtime)}
                 {!finalPhotoUrl && (
                   <>
