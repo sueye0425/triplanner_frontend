@@ -1,7 +1,6 @@
 import React from 'react';
 import { HomeLayout } from './layouts/HomeLayout';
 import { PlanningLayout } from './layouts/PlanningLayout';
-import { FinalItinerary } from './components/FinalItinerary';
 import { CompletedItinerary } from './components/CompletedItinerary';
 import { useTripPlanner } from './hooks/useTripPlanner';
 
@@ -11,6 +10,7 @@ function App() {
     setStep,
     tripPlan,
     attractions,
+    restaurants,
     loading,
     error,
     completedItinerary,
@@ -22,26 +22,18 @@ function App() {
     removeFromWishlist,
     addToItinerary,
     removeFromItinerary,
+    moveAttractionBetweenDays,
+    reorderAttractionInDay,
   } = useTripPlanner();
 
-  if (step === 'completed' && completedItinerary && tripPlan) {
+  if (step === 'completed' && tripPlan) {
     return (
       <CompletedItinerary
         tripPlan={tripPlan}
         completedItinerary={completedItinerary}
         onBack={handleBack}
-      />
-    );
-  }
-
-  if (step === 'final' && tripPlan) {
-    return (
-      <FinalItinerary
-        tripPlan={tripPlan}
-        onBack={handleBack}
-        onComplete={handleComplete}
-        error={error}
         prefetchStatus={prefetchStatus}
+        error={error}
       />
     );
   }
@@ -51,12 +43,15 @@ function App() {
       <PlanningLayout
         tripPlan={tripPlan}
         attractions={attractions}
+        restaurants={restaurants}
         onBack={handleBack}
         onAddToWishlist={addToWishlist}
         onAddToItinerary={addToItinerary}
         onRemoveFromWishlist={removeFromWishlist}
         onRemoveFromItinerary={removeFromItinerary}
-        onContinue={() => setStep('final')}
+        onMoveAttractionBetweenDays={moveAttractionBetweenDays}
+        onReorderAttractionInDay={reorderAttractionInDay}
+        onContinue={handleComplete}
       />
     );
   }
