@@ -30,3 +30,13 @@ export function setInCache(key: string, data: any): void {
     data
   });
 }
+
+export function clearCache(): void {
+  cache.clear();
+  console.log('🧹 Cache cleared - will fetch fresh data from backend');
+}
+
+export function clearCacheForKey(key: string): void {
+  cache.delete(key);
+  console.log(`🧹 Cache cleared for key: ${key}`);
+}

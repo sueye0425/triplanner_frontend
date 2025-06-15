@@ -1,6 +1,7 @@
 import React from 'react';
-import { Clock, MapPin, Star, Utensils, Camera, StickyNote } from 'lucide-react';
+import { Clock, MapPin, Star, Utensils, Camera, StickyNote, ExternalLink } from 'lucide-react';
 import { CompletedItineraryBlock } from '../types';
+import { getFullPhotoUrl } from '../services/tripService';
 
 // Use environment variable or fallback to local development server
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -73,18 +74,26 @@ export function ItineraryBlockCard({ block }: ItineraryBlockCardProps) {
     
   const iconColor = isRestaurant ? 'text-amber-600' : 'text-blue-600';
 
-  // Handle both absolute and relative photo URLs
-  const getPhotoUrl = (photoUrl: string | null) => {
-    if (!photoUrl) return null;
+  const handleCardClick = (e: React.MouseEvent) => {
+    console.log(`🖱️ ItineraryBlockCard clicked: ${block.name}`, {
+      website: block.website,
+      hasWebsite: !!block.website,
+      target: e.target,
+      clickedElement: (e.target as HTMLElement).tagName
+    });
     
-    // If it's already a full URL, use it directly
-    if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
-      return photoUrl;
+    // Don't open website if clicking on buttons or other interactive elements
+    if ((e.target as HTMLElement).closest('button, a')) {
+      console.log('❌ Click ignored - clicked on button or link');
+      return;
     }
     
-    // For relative URLs (like /photo-proxy/...), prepend the API base URL
-    const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
-    return `${baseUrl}${photoUrl}`;
+    if (block.website) {
+      console.log('✅ Opening website:', block.website);
+      window.open(block.website, '_blank', 'noopener,noreferrer');
+    } else {
+      console.log('❌ No website available for this block');
+    }
   };
 
   const getMealtimeDisplay = (mealtime: string | null) => {
@@ -103,17 +112,37 @@ export function ItineraryBlockCard({ block }: ItineraryBlockCardProps) {
     );
   };
 
-  const finalPhotoUrl = getPhotoUrl(block.photo_url);
+  const finalPhotoUrl = getFullPhotoUrl(block.photo_url);
+  
+  // Debug logging
+  console.log(`📅 ItineraryBlockCard ${block.name}:`, {
+    type: block.type,
+    website: block.website,
+    hasWebsite: !!block.website,
+    photo_url: block.photo_url,
+    finalPhotoUrl,
+    will_show_photo: !!finalPhotoUrl
+  });
 
   return (
-    <div className={`relative rounded-2xl border backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden ${cardStyles}`}>
+    <div 
+      className={`relative rounded-2xl border backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden ${cardStyles} 
+        ${block.website ? 'cursor-pointer hover:scale-[1.01]' : ''}`}
+      onClick={handleCardClick}
+      title={block.website ? `Click to visit ${block.name} website` : ''}
+    >
       <div className="flex">
         {/* Content Section - Left Side */}
         <div className="flex-1 p-6">
           {/* Title and Mealtime with Icons */}
           <div className="mb-3">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xl font-bold text-gray-900">{block.name}</h3>
+              <h3 className="text-xl font-bold text-gray-900">
+                {block.name}
+                {block.website && (
+                  <ExternalLink size={14} className={`inline-block ml-2 opacity-70 group-hover:opacity-100 transition-opacity ${iconColor}`} />
+                )}
+              </h3>
               <div className="flex items-center gap-2">
                 {/* Duration Badge */}
                 <div className="flex items-center gap-1 px-2.5 py-1 bg-gray-100/80 rounded-full border border-gray-200/50">
@@ -144,8 +173,18 @@ export function ItineraryBlockCard({ block }: ItineraryBlockCardProps) {
             )}
           </div>
 
-          {/* Description */}
-          <p className="text-gray-700 mb-4 leading-relaxed">{block.description}</p>
+          {/* Description - Handle null descriptions for restaurants */}
+          {block.description && block.description.trim() ? (
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              {block.description}
+              {block.description.endsWith('...') && (
+                <span className="text-gray-500 italic text-sm"> (more details available)</span>
+              )}
+            </p>
+          ) : (
+            // Don't show anything for null descriptions - just leave empty space
+            <div className="mb-4"></div>
+          )}
 
           {/* Address */}
           <div className="flex items-start gap-2 mb-4 text-gray-600">
@@ -163,8 +202,9 @@ export function ItineraryBlockCard({ block }: ItineraryBlockCardProps) {
               <div className="flex items-start gap-2">
                 <StickyNote size={14} className={`flex-shrink-0 mt-0.5 ${iconColor}`} />
                 <div>
-                  <span className="font-medium text-gray-900 text-sm">Notes: </span>
-                  <span className="text-sm text-gray-700">{block.notes}</span>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {block.notes}
+                  </p>
                 </div>
               </div>
             </div>
@@ -180,25 +220,10 @@ export function ItineraryBlockCard({ block }: ItineraryBlockCardProps) {
               className="w-full h-full object-cover"
               onError={(e) => {
                 console.error('Image failed to load:', finalPhotoUrl);
-                // Hide the image container if photo fails to load
-                const container = e.currentTarget.parentElement;
-                if (container) container.style.display = 'none';
+                e.currentTarget.style.display = 'none';
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-l from-black/10 to-transparent" />
-            
-            {/* Type icon overlay */}
-            <div className="absolute top-3 right-3">
-              {isRestaurant ? (
-                <div className={`p-2 rounded-full bg-amber-100/90 backdrop-blur-sm border border-white/20 shadow-lg ${iconColor}`}>
-                  <Utensils size={16} />
-                </div>
-              ) : (
-                <div className={`p-2 rounded-full bg-blue-100/90 backdrop-blur-sm border border-white/20 shadow-lg ${iconColor}`}>
-                  <Camera size={16} />
-                </div>
-              )}
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-l from-transparent to-black/5" />
           </div>
         )}
       </div>

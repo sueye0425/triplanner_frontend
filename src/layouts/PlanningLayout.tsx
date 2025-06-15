@@ -154,9 +154,6 @@ export function PlanningLayout({
                 <PlacesTabs
                   attractions={attractions}
                   restaurants={restaurants}
-                  onAddAttractionToWishlist={onAddToWishlist}
-                  onAddAttractionToItinerary={onAddToItinerary}
-                  totalDays={tripPlan.details.travelDays}
                 />
               </div>
             </div>

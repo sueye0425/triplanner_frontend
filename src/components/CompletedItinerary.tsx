@@ -309,7 +309,14 @@ export function CompletedItinerary({ tripPlan, completedItinerary, onBack, prefe
                 
                 {/* Timeline blocks */}
                 <div className="space-y-8">
-                  {day.blocks.map((block, blockIndex) => (
+                  {day.blocks
+                    .sort((a, b) => {
+                      // Sort by start_time (convert to comparable format)
+                      const timeA = a.start_time.replace(':', '');
+                      const timeB = b.start_time.replace(':', '');
+                      return timeA.localeCompare(timeB);
+                    })
+                    .map((block, blockIndex) => (
                     <div key={`${block.name}-${blockIndex}`} className="relative flex items-start gap-6">
                       {/* Time marker */}
                       <div className="relative flex-shrink-0">

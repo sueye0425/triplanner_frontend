@@ -3,44 +3,35 @@ export interface Location {
   lng: number;
 }
 
-export interface OpeningHoursPeriod {
-  close: {
-    day: number;
-    time: string;
-  };
-  open: {
-    day: number;
-    time: string;
-  };
-}
 
-export interface OpeningHours {
-  open_now: boolean;
-  periods: OpeningHoursPeriod[];
-  weekday_text: string[];
-}
 
 export interface BasePlace {
   name: string;
   description: string;
+  address?: string;
   place_id: string;
   rating?: number;
   user_ratings_total?: number;
   location: Location;
   photos?: string[];
+  website?: string;
 }
 
 export interface Restaurant extends BasePlace {
-  opening_hours?: OpeningHours;
   price_level?: number;
   website?: string;
-  phone?: string;
   wheelchair_accessible?: boolean;
+  cuisine?: string;
+  kid_friendly?: boolean;
+  photo_url?: string;
 }
 
 export interface Attraction extends BasePlace {
-  type: 'suggested' | 'additional';
+  type: 'suggested' | 'additional' | 'landmark';
   badge?: 'new' | 'trending' | null;
+  estimated_duration?: string;
+  kid_friendly?: boolean;
+  photo_url?: string;
 }
 
 export interface TripDetails {
@@ -66,8 +57,15 @@ export interface TripPlan {
 }
 
 export interface GenerateResponse {
-  landmarks: Record<string, Attraction>;
-  restaurants: Record<string, Restaurant>;
+  recommendations: {
+    landmarks: Attraction[];
+    restaurants: Restaurant[];
+  };
+  performance_metrics?: {
+    response_time: number;
+    api_calls_used: number;
+    estimated_cost: string;
+  };
 }
 
 export interface CompletedAttractionItem {
@@ -80,7 +78,7 @@ export interface CompletedAttractionItem {
 export interface CompletedItineraryBlock {
   type: 'landmark' | 'restaurant';
   name: string;
-  description: string;
+  description: string | null; // Can be null for restaurants (optimization)
   start_time: string;
   duration: string;
   mealtime: string | null;
@@ -92,7 +90,8 @@ export interface CompletedItineraryBlock {
   } | null;
   address: string;
   photo_url: string | null;
-  notes: string;
+  notes?: string;
+  website?: string;
 }
 
 export interface CompletedItineraryDay {
@@ -102,4 +101,29 @@ export interface CompletedItineraryDay {
 
 export interface CompletedItinerary {
   itinerary: CompletedItineraryDay[];
+  performance_metrics?: {
+    timings: {
+      llm_generation: number;
+      restaurant_addition: number;
+      landmark_enhancement: number;
+      duplicate_removal: number;
+      total_response_time: number;
+    };
+    api_usage: {
+      google_places: {
+        geocoding_calls: number;
+        nearby_search_calls: number;
+        place_details_calls: number;
+        total_calls: number;
+        estimated_cost: string;
+      };
+      openai: {
+        llm_calls: number;
+        tokens_used: number;
+        estimated_cost: string;
+      };
+      total_estimated_cost: string;
+    };
+    optimizations: Record<string, string>;
+  };
 }

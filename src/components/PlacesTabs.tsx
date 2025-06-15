@@ -7,17 +7,11 @@ import { MapPin, Utensils } from 'lucide-react';
 interface PlacesTabsProps {
   attractions: Attraction[];
   restaurants: Restaurant[];
-  onAddAttractionToWishlist: (attraction: Attraction) => void;
-  onAddAttractionToItinerary: (attraction: Attraction, day: number) => void;
-  totalDays: number;
 }
 
 export function PlacesTabs({
   attractions,
   restaurants,
-  onAddAttractionToWishlist,
-  onAddAttractionToItinerary,
-  totalDays,
 }: PlacesTabsProps) {
   const [activeTab, setActiveTab] = useState<'attractions' | 'restaurants'>('attractions');
 
@@ -50,16 +44,35 @@ export function PlacesTabs({
 
       <div className="min-h-[400px]">
         {activeTab === 'attractions' ? (
-          <div className="grid md:grid-cols-2 gap-6">
-            {attractions.map((attraction) => (
-              <AttractionCard
-                key={attraction.place_id || attraction.name}
-                attraction={attraction}
-                onAddToWishlist={() => onAddAttractionToWishlist(attraction)}
-                onAddToItinerary={(day) => onAddAttractionToItinerary(attraction, day)}
-                totalDays={totalDays}
-              />
-            ))}
+          <div className="space-y-6">
+            {/* Drag & Drop Tutorial */}
+            <div className="bg-blue-50/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-200/50">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-sm font-semibold text-blue-600">💡</span>
+                </div>
+                <h3 className="text-lg font-semibold text-blue-800">How to Build Your Itinerary</h3>
+              </div>
+              <p className="text-blue-700 mb-3 leading-relaxed">
+                Simply <strong>drag and drop</strong> any landmark or restaurant card to your wishlist or directly into your itinerary on the right sidebar.
+              </p>
+              <div className="flex items-center gap-2 text-sm text-blue-600">
+                <span className="bg-blue-100 px-2 py-1 rounded-full">🖱️ Drag</span>
+                <span>→</span>
+                <span className="bg-blue-100 px-2 py-1 rounded-full">📋 Wishlist</span>
+                <span>or</span>
+                <span className="bg-blue-100 px-2 py-1 rounded-full">📅 Itinerary</span>
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              {attractions.map((attraction) => (
+                <AttractionCard
+                  key={attraction.place_id || attraction.name}
+                  {...attraction}
+                />
+              ))}
+            </div>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
