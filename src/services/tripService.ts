@@ -2,8 +2,8 @@ import { TripDetails, Attraction, CompletedItinerary, GenerateResponse, Restaura
 import { getCacheKey, getFromCache, setInCache, clearCache, clearCacheForKey } from '../utils/cache';
 
 // Use environment variable or fallback to local development server
-const API_URL = 'http://localhost:8000'; // Temporarily hardcoded for debugging
-// const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_URL = 'http://localhost:8000'; // Temporarily hardcoded for debugging
 const API_TIMEOUT = 30000;
 
 interface AttractionInfo {

@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://plan-your-trip-wcaj.onrender.com',
+        target: 'https://tripaibuddy-backend-850428903067.us-central1.run.app',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
