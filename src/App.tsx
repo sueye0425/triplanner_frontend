@@ -2,9 +2,12 @@ import React from 'react';
 import { HomeLayout } from './layouts/HomeLayout';
 import { PlanningLayout } from './layouts/PlanningLayout';
 import { CompletedItinerary } from './components/CompletedItinerary';
+import { AuthForm } from './components/AuthForm';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { useTripPlanner } from './hooks/useTripPlanner';
 
-function App() {
+function AppContent() {
+  const { currentUser } = useAuth();
   const {
     step,
     setStep,
@@ -25,6 +28,11 @@ function App() {
     moveAttractionBetweenDays,
     reorderAttractionInDay,
   } = useTripPlanner();
+
+  // If user is not logged in, show login form
+  if (!currentUser) {
+    return <AuthForm />;
+  }
 
   if (step === 'completed' && tripPlan) {
     return (
@@ -62,6 +70,14 @@ function App() {
       error={error}
       onSubmit={handleNewTrip}
     />
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

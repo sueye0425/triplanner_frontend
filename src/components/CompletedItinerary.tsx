@@ -2,6 +2,7 @@ import React from 'react';
 import { MapPin, Calendar, Users, Share2, Printer, Download, Loader2 } from 'lucide-react';
 import type { TripPlan, CompletedItinerary as CompletedItineraryData } from '../types';
 import { BackButton } from './BackButton';
+import { UserNav } from './UserNav';
 import { ItineraryBlockCard, SkeletonItineraryCard } from './ItineraryBlockCard';
 
 interface CompletedItineraryProps {
@@ -125,8 +126,13 @@ export function CompletedItinerary({ tripPlan, completedItinerary, onBack, prefe
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <BackButton onClick={onBack} label="Back to Planning" />
           
+          {/* User Navigation - Top Right */}
+          <div className="fixed top-4 right-4 z-50">
+            <UserNav />
+          </div>
+          
           {/* Floating Action Buttons - Top Right */}
-          <div className="fixed top-6 right-6 z-50 flex flex-col gap-3">
+          <div className="fixed top-20 right-6 z-50 flex flex-col gap-3">
             <button
               onClick={handleShare}
               className="flex items-center justify-center w-12 h-12 text-gray-700 bg-white/95 backdrop-blur-lg rounded-xl hover:bg-orange-50 hover:text-orange-600 border border-gray-200/50 shadow-lg transition-all duration-200 group"

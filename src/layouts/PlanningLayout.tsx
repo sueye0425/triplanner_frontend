@@ -4,6 +4,7 @@ import { BackButton } from '../components/BackButton';
 import { Wishlist } from '../components/Wishlist';
 import { Itinerary } from '../components/Itinerary';
 import { PlacesTabs } from '../components/PlacesTabs';
+import { UserNav } from '../components/UserNav';
 import { MapPin, Calendar, Users } from 'lucide-react';
 
 interface PlanningLayoutProps {
@@ -90,6 +91,11 @@ export function PlanningLayout({
       </div>
 
       <div className="relative">
+        {/* User Navigation */}
+        <div className="absolute top-4 right-4 z-30">
+          <UserNav />
+        </div>
+        
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <BackButton onClick={onBack} label="Back to Start" />
           <div className="text-center">
